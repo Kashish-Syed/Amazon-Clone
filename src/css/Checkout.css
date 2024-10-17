@@ -8,7 +8,6 @@
 .checkout_ad {
     width: 100%;
     margin-bottom: 10px;
-    clip-path: inset(0 0 50% 0);
 }
 
 .checkout_title {

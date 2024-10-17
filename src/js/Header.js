@@ -11,7 +11,7 @@ function Header() {
   return (
     <div className='header'>
         <Link to="/">
-        <img className="header_logo" src="/images/Amazon_logo.svg.png" alt="amazon_logo"/>
+        <img className="header_logo" src="/images/amazon_white_letter.png" alt="amazon_logo"/>
         </Link>
       <div className='header_search'>
         <input className='header_searchInput' type="text"/>
@@ -19,6 +19,7 @@ function Header() {
       </div>
 
       <div className='header_nav'>
+        <Link to='/login'>
             <div className='header_option'>
                 <span className='header_optionLineOne'>
                     Hello Guest
@@ -27,6 +28,7 @@ function Header() {
                     Sign in
                 </span>
             </div>
+        </Link>
             <div className='header_option'>
                 <span className='header_optionLineOne'>
                     Return
