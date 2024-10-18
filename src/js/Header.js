@@ -29,7 +29,7 @@ function Header() {
         <Link to={!user && '/login'}>
             <div onClick={handleAuthentication} className='header_option'>
                 <span className='header_optionLineOne'>
-                    Hello Guest
+                    {user ? `Hello ${user?.email.split('@')[0]}` : 'Hello Guest'}
                 </span>
                 <span className='header_optionLineTwo'>
                     {user ? 'Sign Out' : 'Sign In'}
