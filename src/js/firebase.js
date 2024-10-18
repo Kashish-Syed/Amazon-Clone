@@ -1,5 +1,6 @@
-import firebase from 'firebase';
-import { initializeApp } from 'firebase';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCgmvujrv-YAGP0mp2hoPL_G7kqs2ZEZag",
@@ -11,9 +12,9 @@ const firebaseConfig = {
     measurementId: "G-ETF4ZS6MCQ"
   };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 
-const db = firebaseApp.firestore(); // firestore is real-time firebase database
-const auth = firebase.auth();
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp); // firestore is real-time firebase database
 
-export { db, auth };
+export { auth, db };
