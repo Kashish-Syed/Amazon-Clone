@@ -17,6 +17,7 @@
     width: 100%;
     object-fit: contain;
     margin-bottom: 15px;
+    overflow: hidden;
 }
 
 .product_info {

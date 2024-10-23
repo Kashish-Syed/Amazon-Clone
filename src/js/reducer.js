@@ -15,6 +15,12 @@ const reducer = (state, action) => {
                 basket: [...state.basket, action.item],
             };
 
+        case 'EMPTY_CART':
+            return {
+                ...state,
+                basket: []
+            }
+
         case 'REMOVE_FROM_CART':
             //find the index of what we are going to delete first
             const index = state.basket.findIndex(
