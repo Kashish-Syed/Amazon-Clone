@@ -12,7 +12,7 @@ const logger = require("firebase-functions/logger");
 const express = require("express");
 const cors = require("cors");
 const functions = require('firebase-functions');
-const stripe = require("stripe")('sk_test_51QCRssB3IslARpkzJmHSqDNvxZSrbBI7Tb9CdzTy9CGJyfjCBtAAA359f0ZSK6vb7kx1za4HzdNtRx9bfSPBRcgt002BpQCLM4');
+const stripe = require("stripe")('ADD_THE_SECRET_KEY');
 
 // API
 
