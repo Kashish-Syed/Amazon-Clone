@@ -1,6 +1,7 @@
 import React from 'react'
 import "../css/Product.css"
 import { useStateValue } from './StateProvider'
+import '../css/App.css';
 
 function Product({ id, title, image, price, rating}) {
 
@@ -21,7 +22,7 @@ function Product({ id, title, image, price, rating}) {
   };
 
   return (
-    <div className='product'>
+    <div className='product pop-out'>
       
       <div className='product_info'>
         <p>{title}</p>
@@ -37,7 +38,7 @@ function Product({ id, title, image, price, rating}) {
       </div>
 
       <img className='product_img' src={image} alt=''/>
-      <button onClick={addToCart}>Add to cart</button>
+      <button className='button-effect' onClick={addToCart}>Add to cart</button>
 
     </div>
   )

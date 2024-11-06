@@ -21,30 +21,34 @@ function Header() {
         <img className="header_logo" src="/images/amazon_white_letter.png" alt="amazon_logo"/>
         </Link>
       <div className='header_search'>
-        <input className='header_searchInput' type="text"/>
+        <input className='header_searchInput' type="text" placeholder='Search Here'/>
         <SearchIcon className='header_searchIcon'/>   
       </div>
 
       <div className='header_nav'>
-        <Link to={!user && '/login'}>
-            <div onClick={handleAuthentication} className='header_option'>
-                <span className='header_optionLineOne'>
-                    {user ? `Hello ${user?.email.split('@')[0]}` : 'Hello Guest'}
-                </span>
-                <span className='header_optionLineTwo'>
-                    {user ? 'Sign Out' : 'Sign In'}
-                </span>
-            </div>
-        </Link>
-            <div className='header_option'>
-                <span className='header_optionLineOne'>
-                    Return
-                </span>
-                <span className='header_optionLineTwo'>
-                    & Orders
-                </span>
-            </div>
-            <div className='header_option'>
+            <Link to={!user && '/login'}>
+                <div onClick={handleAuthentication} className='header_option header_border'>
+                    <span className='header_optionLineOne'>
+                        {user ? `Hello ${user?.email.split('@')[0]}` : 'Hello Guest'}
+                    </span>
+                    <span className='header_optionLineTwo'>
+                        {user ? 'Sign Out' : 'Sign In'}
+                    </span>
+                </div>
+            </Link>
+
+            <Link to='/orders'>
+                <div className='header_option header_border'>
+                    <span className='header_optionLineOne'>
+                        Return
+                    </span>
+                    <span className='header_optionLineTwo'>
+                        & Orders
+                    </span>
+                </div>
+            </Link>
+
+            <div className='header_option header_border'>
                 <span className='header_optionLineOne'>
                     Your
                 </span>
@@ -53,7 +57,7 @@ function Header() {
                 </span>
             </div>
             <Link to='/checkout'>
-                <div className='header_optionBasket'>
+                <div className='header_optionBasket header_border'>
                     <ShoppingCartIcon />
                     <span className='header_optionLineTwo header_basketCount'>
                         { basket?.length}

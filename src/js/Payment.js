@@ -8,6 +8,8 @@ import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
 import axios from './axios';
 import { useNavigate } from 'react-router-dom';
+import { db } from './firebase';
+import { collection, doc, setDoc } from "firebase/firestore";
 
 function Payment() {
     const [{ basket, user }, dispatch] = useStateValue();
@@ -30,7 +32,7 @@ function Payment() {
                     method: 'post',
                     // stripe expects the total in a currencies sub units
                     // for example: for $10 it wants 1000. If you are ding dollars it changes into cents
-                    url: `/payment/create?total=${getBasketTotal(basket) * 100}`
+                    url: `/payments/create?total=${getBasketTotal(basket) * 100}`
                 });
                 setClientSecret(response.data.clientSecret);
             } catch (error) {
@@ -51,6 +53,16 @@ function Payment() {
             }
         }).then(({ paymentIntent }) => {
             // paymentIntent = payment confirmation
+
+            const ordersCollection = collection(db, 'users', user?.uid, 'orders');
+            const orderDoc = doc(ordersCollection, paymentIntent.id);
+
+            setDoc(orderDoc, {
+                basket: basket,
+                amount: paymentIntent.amount,
+                created: paymentIntent.created,
+            });
+
             setSucceeded(true);
             setError(null);
             setProcessing(false);

@@ -30,7 +30,7 @@ function Subtotal() {
             prefix={"$"}
         />
 
-        <button onClick={e => navigate('/payment')}>Checkout</button>
+        <button className='button-effect' onClick={e => navigate('/payment')}>Checkout</button>
     </div>
   )
 }

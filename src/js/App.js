@@ -22,7 +22,6 @@ function App() {
   useEffect(() => {
     // This will only run once when the app component loads
     onAuthStateChanged(auth, (authUser) => {
-      console.log('THE USER IS >>>> ', authUser);
       if (authUser) {
         dispatch({
           type: 'SET_USER',
@@ -42,7 +41,7 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
-          <Route path="/orders" element={[ <Orders /> ]}/>
+          <Route path="/orders" element={[ <Header />, <Orders /> ]}/>
           <Route path="/login" element={[ <Login /> ]}/>
           <Route path="/checkout" element={[ <Header />, <Checkout />]}/>
           <Route path="/" element={[ <Header />, <Home />]}/>

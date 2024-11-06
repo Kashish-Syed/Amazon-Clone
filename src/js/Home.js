@@ -1,6 +1,7 @@
 import React from 'react'
 import '../css/Home.css';
 import Product from '../js/Product';
+import '../css/App.css';
 
 function Home() {
   return (
@@ -9,7 +10,7 @@ function Home() {
         <img className='home_image' src="/images/amazon_banner.jpg" alt="amazon_banner"/>
 
         <div className='home_row'>
-          <Product id='1234' title='hair mask loreum ipsum' price={24.78} image="./images/product1.jpg" rating={5}/>
+          <Product id='1234' title='hair mask loreum ipsum' price={24.78} image="./images/crockery.jpg" rating={5}/>
           <Product id='1234' title='test2' price={19.99} image="./images/laneige_lipbalm.jpg" rating={5}/>
         </div>
 

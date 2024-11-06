@@ -1,0 +1,24 @@
+.pop-out {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+  
+.pop-out:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+  
+.button-effect {
+    background-color: #ffa41b;
+    color: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.button-effect:hover {
+    background-color: #f0a64b;
+}
+
+.button-effect:active {
+    transform: scale(0.90); /* Shrinks button slightly on click */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduces shadow */
+}

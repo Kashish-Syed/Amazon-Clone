@@ -19,7 +19,7 @@
 .checkoutProduct_image {
     max-height: 200px;
     width: 100%;
-    object-fit: contain;
+    object-fit: cover;
     margin-bottom: 15px;
     overflow: hidden;
 }
