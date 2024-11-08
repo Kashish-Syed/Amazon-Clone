@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../css/Orders.css';
-import { db } from './firebase';
+import { db } from '../../database/firebase';
 import { useStateValue } from './StateProvider';
 import { collection, doc, onSnapshot, orderBy, query } from "firebase/firestore";
 import Order from './Order';

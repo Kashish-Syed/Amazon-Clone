@@ -1,7 +1,8 @@
 .checkoutProduct {
     display: flex;
     margin-top: 20px;
-    margin-bottom: 20px;
+    padding: 20px;
+    border-bottom: 1px solid lightgray;
 }
 
 .checkoutProduct_info {
@@ -31,4 +32,9 @@
 .checkoutProduct_title {
     font-size: 17px;
     font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.checkoutProduct_description {
+    margin-bottom: 5px;
 }

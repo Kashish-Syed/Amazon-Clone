@@ -27,6 +27,7 @@ function Order({ order }) {
           <CheckoutProduct
               id={item.id}
               title={item.title}
+              description={item.description}
               image={item.image}
               price={item.price}
               rating={item.rating}

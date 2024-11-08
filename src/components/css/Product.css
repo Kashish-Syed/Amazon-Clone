@@ -10,6 +10,7 @@
     min-width: 100px;
     background-color: white;
     z-index: 1;
+    border-radius: 5px;
 }
 
 .product > img {
@@ -22,16 +23,12 @@
 
 .product_info {
     height: 100px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     width: 100%;
 }
 
 .product_price {
     margin-top: 5px;
-}
-
-.product_rating {
-    display: flex;
 }
 
 .product > button {

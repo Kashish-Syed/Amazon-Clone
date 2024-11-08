@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './css/index.css';
-import App from './js/App';
+import './components/css/index.css';
+import App from './components/js/App';
 import reportWebVitals from './reportWebVitals';
-import { StateProvider } from './js/StateProvider';
-import reducer, { initialState } from './js/reducer';
+import { StateProvider } from './components/js/StateProvider';
+import reducer, { initialState } from './components/js/reducer';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -1,8 +1,11 @@
 import React from 'react'
 import '../css/CheckoutProduct.css';
 import { useStateValue } from './StateProvider';
+import Rating from '@mui/material/Rating';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
 
-function CheckoutProduct({ id, image, title, price, rating, hideButton}) {
+function CheckoutProduct({ id, image, title, description, price, rating, hideButton}) {
   const [{ basket }, dispatch] = useStateValue();
 
   const removeFromBasket = () => {
@@ -12,22 +15,25 @@ function CheckoutProduct({ id, image, title, price, rating, hideButton}) {
     })
   }
 
+  const StyledRating = styled(Rating)({
+    '& .MuiRating-iconFilled': {
+      color: '#ea8d3a',
+    },
+  });
+
   return (
     <div className='checkoutProduct'>
-      <img className='checkouProduct_image' src={image}/>
+      <img className='checkouProduct_image' src={image} style={{ width: '200px', height: 'auto' }}/>
       <div className='checkoutProduct_info'>
         <p className='checkoutProduct_title'>{title}</p>
+        <p className='checkoutProduct_description'>{description}</p>
         <p className='checkoutProduct_price'>
             <small>$</small>
             <strong>{price}</strong>
         </p>
-        <div className='checkoutProduct_rating'>
-            {Array(rating)
-            .fill()
-            .map((_, i) => (
-                <p>⭐️</p>
-            ))}
-        </div>
+        <Typography sx={{ mt: 1 }}>
+          <StyledRating name="half-rating-read" value={rating} precision={0.1} readOnly />
+        </Typography>
         {!hideButton && (
           <button className='button-effect' onClick={removeFromBasket}>Remove From Cart</button>
         )}

@@ -8,7 +8,7 @@ import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
 import axios from './axios';
 import { useNavigate } from 'react-router-dom';
-import { db } from './firebase';
+import { db } from '../../database/firebase';
 import { collection, doc, setDoc } from "firebase/firestore";
 
 function Payment() {
@@ -113,6 +113,7 @@ function Payment() {
                     <CheckoutProduct
                         id={item.id}
                         title={item.title}
+                        description={item.description}
                         image={item.image}
                         price={item.price}
                         rating={item.rating}
