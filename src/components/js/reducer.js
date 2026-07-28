@@ -4,8 +4,13 @@ export const initialState = {
 
 // Selector
 // Like a for loop
+//
+// Number(...) is load-bearing, not cosmetic. Some Firestore product documents
+// store `price` as a string rather than a number. With a bare `item.price + amount`
+// JavaScript concatenates instead of adding, so a basket of ["12.99", 5] produced
+// "512.990" and the customer was charged $512.99 instead of $17.99.
 export const getBasketTotal = (basket) =>
-    basket?.reduce((amount, item) => item.price + amount, 0);
+    basket?.reduce((amount, item) => Number(item.price ?? 0) + amount, 0) ?? 0;
 
 const reducer = (state, action) => {
     switch(action.type) {
@@ -21,7 +26,7 @@ const reducer = (state, action) => {
                 basket: []
             }
 
-        case 'REMOVE_FROM_CART':
+        case 'REMOVE_FROM_CART': {
             //find the index of what we are going to delete first
             const index = state.basket.findIndex(
                 (basketItem) => basketItem.id === action.id
@@ -38,12 +43,18 @@ const reducer = (state, action) => {
                 ...state,
                 basket: newBasket
             }
-        
+        }
+
         case 'SET_USER':
             return {
                 ...state,
                 user: action.user
             }
+
+        // Without this, any unrecognised action returned `undefined` and wiped
+        // the entire state - the basket and the signed-in user would vanish.
+        default:
+            return state;
     }
 };
 

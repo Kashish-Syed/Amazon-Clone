@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import '../css/Orders.css';
 import { db } from '../../database/firebase';
 import { useStateValue } from './StateProvider';
-import { collection, doc, onSnapshot, orderBy, query } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import Order from './Order';
 
 function Orders() {
-    const [{ basket, user }, dispatch] = useStateValue();
+    const [{ user }] = useStateValue();
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -32,8 +32,9 @@ function Orders() {
     <div className='orders'>
       <h1>Your Orders</h1>
       <div className="orders_order">
+        {orders.length === 0 && <p>You have no orders yet.</p>}
         {orders?.map(order => (
-            <Order order={order} />
+            <Order key={order.id} order={order} />
         ))}
       </div>
     </div>

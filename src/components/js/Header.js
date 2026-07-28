@@ -5,13 +5,14 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
 import { useStateValue } from './StateProvider';
 import { auth } from '../../database/firebase';
+import { signOut } from 'firebase/auth';
 
 function Header() {
-    const [{ basket, user}, dispatch] = useStateValue();
+    const [{ basket, user}] = useStateValue();
 
     const handleAuthentication = () => {
         if (user) {
-            auth.signOut();
+            signOut(auth);
         }
     }
 
@@ -26,7 +27,10 @@ function Header() {
       </div>
 
       <div className='header_nav'>
-            <Link to={!user && '/login'}>
+            {/* When signed in this is a sign-out control, not a link to /login.
+                It previously rendered `to={false}`, which react-router v6 does
+                not accept as a destination. */}
+            <Link to={user ? '/' : '/login'}>
                 <div onClick={handleAuthentication} className='header_option header_border'>
                     <span className='header_optionLineOne'>
                         {user ? `Hello ${user?.email.split('@')[0]}` : 'Hello Guest'}

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import '../css/Payment.css';
 import { useStateValue } from './StateProvider';
 import CheckoutProduct from './CheckoutProduct';
-import { Link } from '@mui/material';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
 import axios from './axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { db } from '../../database/firebase';
 import { collection, doc, setDoc } from "firebase/firestore";
 
@@ -19,45 +18,84 @@ function Payment() {
     const navigate = useNavigate();
 
     const [succeeded, setSucceeded] = useState(false);
-    const [processing, setProcessing] = useState("")
+    const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
     const [disabled, setDisabled] = useState(true);
     const [clientSecret, setClientSecret] = useState(null);
 
+    // Stripe works in the currency's smallest unit, so $10.00 is sent as 1000.
+    // Math.round matters: floating-point prices like 29.99 * 100 produce
+    // 2998.9999999999995, and Stripe rejects a non-integer amount.
+    const totalInCents = Math.round(getBasketTotal(basket) * 100);
+
     useEffect(() => {
-        // generate the special stripe secret which allows us to charge a customer
-        const getClientSecret = async () => {
-            try{
-                const response = await axios({
-                    method: 'post',
-                    // stripe expects the total in a currencies sub units
-                    // for example: for $10 it wants 1000. If you are ding dollars it changes into cents
-                    url: `/payments/create?total=${getBasketTotal(basket) * 100}`
-                });
-                setClientSecret(response.data.clientSecret);
-            } catch (error) {
-                console.error('Error fetching client secret: ', error);
-            }
+        // Generate the Stripe client secret that allows us to charge this customer.
+        if (basket.length === 0) {
+            setClientSecret(null);
+            return;
         }
+
+        let cancelled = false;
+
+        const getClientSecret = async () => {
+            try {
+                const response = await axios.post('', null, {
+                    params: { total: totalInCents },
+                });
+                if (!cancelled) {
+                    setClientSecret(response.data.clientSecret);
+                    setError(null);
+                }
+            } catch (err) {
+                // Previously this only logged to the console, so a dead payments
+                // endpoint left the Buy button silently inert with no user feedback.
+                console.error('Error fetching client secret: ', err);
+                if (!cancelled) {
+                    setClientSecret(null);
+                    setError(
+                        err.response?.data?.error ??
+                        'Could not reach the payment service. Please try again later.'
+                    );
+                }
+            }
+        };
+
         getClientSecret();
-    }, [basket]);
+
+        // Guard against an out-of-order response overwriting newer state when the
+        // basket changes quickly.
+        return () => { cancelled = true; };
+    }, [basket, totalInCents]);
 
     const handleSubmit = async (event) => {
-        // does all the stripe implementation
         event.preventDefault();
+
+        if (!stripe || !elements || !clientSecret || processing) {
+            return;
+        }
+
         setProcessing(true);
+        setError(null);
 
-        const payload = await stripe.confirmCardPayment(clientSecret, {
-            payment_method: {
-                card: elements.getElement(CardElement)
+        try {
+            const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
+                clientSecret,
+                { payment_method: { card: elements.getElement(CardElement) } }
+            );
+
+            // A declined card returns an error and NO paymentIntent. The previous
+            // code went straight to paymentIntent.id and threw a TypeError here.
+            if (stripeError) {
+                setError(stripeError.message);
+                setProcessing(false);
+                return;
             }
-        }).then(({ paymentIntent }) => {
-            // paymentIntent = payment confirmation
 
-            const ordersCollection = collection(db, 'users', user?.uid, 'orders');
+            const ordersCollection = collection(db, 'users', user.uid, 'orders');
             const orderDoc = doc(ordersCollection, paymentIntent.id);
 
-            setDoc(orderDoc, {
+            // Awaited so we do not navigate to /orders before the write lands.
+            await setDoc(orderDoc, {
                 basket: basket,
                 amount: paymentIntent.amount,
                 created: paymentIntent.created,
@@ -67,13 +105,14 @@ function Payment() {
             setError(null);
             setProcessing(false);
 
-            dispatch({
-                type: 'EMPTY_CART'
-            })
+            dispatch({ type: 'EMPTY_CART' });
 
             navigate('/orders', { replace: true });
-
-        })
+        } catch (err) {
+            console.error('Payment failed: ', err);
+            setError('Something went wrong while processing your payment.');
+            setProcessing(false);
+        }
     }
 
     const handleChange = event => {
@@ -109,8 +148,9 @@ function Payment() {
             <div className='payment_items'>
                 {/* All the products are going to show here */}
                 {/* pull the basket here */}
-                {basket.map(item => (
+                {basket.map((item, index) => (
                     <CheckoutProduct
+                        key={`${item.id}-${index}`}
                         id={item.id}
                         title={item.title}
                         description={item.description}
@@ -143,12 +183,12 @@ function Payment() {
                             thousandSeparator={true}
                             prefix={'$'}
                         />
-                        <button disabled={processing || disabled || succeeded}>
-                            <span>{processing ? <p>Processing</p> : "Buy Now"}</span>
+                        <button disabled={processing || disabled || succeeded || !clientSecret}>
+                            <span>{processing ? "Processing..." : "Buy Now"}</span>
                         </button>
                     </div>
 
-                    {error && <div>{error}</div>}
+                    {error && <div className='payment_error'>{error}</div>}
                 </form>
             </div>
         </div>
