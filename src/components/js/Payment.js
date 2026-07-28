@@ -33,7 +33,7 @@ function Payment() {
   const correlationId = useRef(newCorrelationId());
 
   const pricing = selectPricing(state);
-  const { totalCents, itemCount } = pricing;
+  const { totalCents, netMerchandiseCents, itemCount } = pricing;
 
   const requestClientSecret = useCallback(
     async (amountCents, signal) => {
@@ -73,12 +73,12 @@ function Payment() {
     // one must not overwrite the newer client secret.
     const signal = { cancelled: false };
 
-    requestClientSecret(totalCents, signal);
+    requestClientSecret(netMerchandiseCents, signal);
 
     return () => {
       signal.cancelled = true;
     };
-  }, [totalCents, requestClientSecret]);
+  }, [netMerchandiseCents, requestClientSecret]);
 
   // Checkout requires an account, because orders are written to
   // users/{uid}/orders and the Firestore rules reject an unauthenticated write.
