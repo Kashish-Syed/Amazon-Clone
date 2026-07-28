@@ -11,13 +11,13 @@ import { logger, serializeError } from '../../lib/logger';
 function Header() {
     const [state] = useStateValue();
     const { user } = state;
-
-    // Total UNITS, not distinct products. `basket.length` counted lines, so a
-    // cart holding three of one item displayed "1".
-    const itemCount = state.lines.length;
-
-    const handleAuthentication = async () => {
-        if (!user) return;
+  14 | 
+  15 |     // Total UNITS, not distinct products. `basket.length` counted lines, so a
+  16 |     // cart holding three of one item displayed "1".
+  17 |     const itemCount = selectItemCount(state);
+  18 | 
+  19 |     const handleAuthentication = async () => {
+  20 |         if (!user) return;
 
         try {
             await signOut(auth);
