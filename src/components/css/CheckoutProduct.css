@@ -38,3 +38,19 @@
 .checkoutProduct_description {
     margin-bottom: 5px;
 }
+.checkoutProduct_quantity {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  color: #565959;
+}
+
+.checkoutProduct_unitPrice {
+  font-weight: 400;
+  color: #565959;
+}
+
+.checkoutProduct_actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}

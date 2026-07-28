@@ -29,3 +29,8 @@
     border-color: #a88734 #9c7e31 #846a29;
     color: #111;
 }
+.subtotal_freeShipping {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #067d62;
+}

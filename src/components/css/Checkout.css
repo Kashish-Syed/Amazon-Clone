@@ -40,3 +40,7 @@
 .checkout_product {
     margin-bottom: 15px;
 }
+.checkout_empty {
+  padding: 1rem 0;
+  color: #565959;
+}

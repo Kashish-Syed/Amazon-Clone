@@ -1,38 +1,50 @@
-import React from 'react'
-import '../css/Subtotal.css';
-import CurrencyFormat from "react-currency-format";
-import { useStateValue } from './StateProvider';
-import { getBasketTotal } from './reducer';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../css/Subtotal.css';
+import { useStateValue } from './StateProvider';
+import { selectPricing } from './reducer';
+import OrderSummary from './OrderSummary';
+import PromoCodeField from './PromoCodeField';
+import { FREE_SHIPPING_THRESHOLD_CENTS } from '../../domain/shipping';
+import { format } from '../../lib/money';
 
 function Subtotal() {
-    const [{ basket }] = useStateValue();
-    const navigate = useNavigate();
+  const [state] = useStateValue();
+  const navigate = useNavigate();
+
+  // One call, one source of truth. This component does not add anything up.
+  const pricing = selectPricing(state);
+
+  const shortfallCents = FREE_SHIPPING_THRESHOLD_CENTS - pricing.netMerchandiseCents;
+  const qualifiesForFreeShipping = pricing.shipping.freeShippingApplied;
+  const isEmpty = pricing.itemCount === 0;
 
   return (
-    <div className='subtotal'>
-        <CurrencyFormat
-            renderText={(value) => (
-                <>
-                {/* use the value here */}
-                    <p>
-                        Subtotal ({basket.length} items): <strong>{value}</strong>
-                    </p>
-                    <small className='subtotal_gift'>
-                        <input type='checkbox' /> This order contains a gift
-                    </small>
-                </>
-            )}
-            decimalScale={2}
-            value={getBasketTotal(basket)} // implement later
-            displayType={"text"}
-            thousandSeparator={true}
-            prefix={"$"}
-        />
+    <div className="subtotal">
+      <OrderSummary pricing={pricing} />
 
-        <button className='button-effect' onClick={e => navigate('/payment')}>Checkout</button>
+      {!isEmpty && !qualifiesForFreeShipping && shortfallCents > 0 && (
+        <p className="subtotal_freeShipping">
+          {`Add ${format(shortfallCents)} more for free standard shipping.`}
+        </p>
+      )}
+
+      <PromoCodeField />
+
+      <small className="subtotal_gift">
+        <input type="checkbox" /> This order contains a gift
+      </small>
+
+      <button
+        type="button"
+        className="button-effect"
+        disabled={isEmpty}
+        onClick={() => navigate('/payment')}
+      >
+        {isEmpty ? 'Your cart is empty' : 'Proceed to checkout'}
+      </button>
     </div>
-  )
+  );
 }
 
-export default Subtotal
+export default Subtotal;

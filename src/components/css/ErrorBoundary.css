@@ -1,0 +1,39 @@
+.errorBoundary {
+  max-width: 640px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.errorBoundary h2 {
+  margin-top: 0;
+}
+
+.errorBoundary_actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.errorBoundary_link {
+  color: #007185;
+  text-decoration: none;
+}
+
+.errorBoundary_link:hover {
+  text-decoration: underline;
+}
+
+.errorBoundary_details {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #555;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}

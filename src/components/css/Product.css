@@ -38,3 +38,9 @@
     border-color: #a88734 #9c7e31 #846a29;
     color: #111;
 }
+.product_stock {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b12704;
+}

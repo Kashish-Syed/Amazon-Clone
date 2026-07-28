@@ -1,201 +1,228 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import '../css/Payment.css';
 import { useStateValue } from './StateProvider';
+import { ACTIONS, selectPricing } from './reducer';
 import CheckoutProduct from './CheckoutProduct';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import CurrencyFormat from 'react-currency-format';
-import { getBasketTotal } from './reducer';
-import axios from './axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { db } from '../../database/firebase';
-import { collection, doc, setDoc } from "firebase/firestore";
+import OrderSummary from './OrderSummary';
+import DeliveryOptions from './DeliveryOptions';
+import { createPaymentIntent } from '../../services/paymentService';
+import { createOrder } from '../../services/orderService';
+import { format } from '../../lib/money';
+import { logger, newCorrelationId, serializeError } from '../../lib/logger';
 
 function Payment() {
-    const [{ basket, user }, dispatch] = useStateValue();
+  const [state, dispatch] = useStateValue();
+  const { lines, user } = state;
 
-    const stripe = useStripe();
-    const elements = useElements();
-    const navigate = useNavigate();
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate();
 
-    const [succeeded, setSucceeded] = useState(false);
-    const [processing, setProcessing] = useState(false);
-    const [error, setError] = useState(null);
-    const [disabled, setDisabled] = useState(true);
-    const [clientSecret, setClientSecret] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
+  const [setupError, setSetupError] = useState(null);
+  const [cardError, setCardError] = useState(null);
+  const [cardComplete, setCardComplete] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [succeeded, setSucceeded] = useState(false);
 
-    // Stripe works in the currency's smallest unit, so $10.00 is sent as 1000.
-    // Math.round matters: floating-point prices like 29.99 * 100 produce
-    // 2998.9999999999995, and Stripe rejects a non-integer amount.
-    const totalInCents = Math.round(getBasketTotal(basket) * 100);
+  // One id for the whole checkout attempt, shared by the client secret request,
+  // the order write, and the Supabase function's own logs. Without it, three
+  // separate log streams cannot be lined up when something goes wrong.
+  const correlationId = useRef(newCorrelationId());
 
-    useEffect(() => {
-        // Generate the Stripe client secret that allows us to charge this customer.
-        if (basket.length === 0) {
-            setClientSecret(null);
-            return;
-        }
+  const pricing = selectPricing(state);
+  const { totalCents, itemCount } = pricing;
 
-        let cancelled = false;
+  const requestClientSecret = useCallback(
+    async (amountCents, signal) => {
+      if (amountCents <= 0) {
+        setClientSecret(null);
+        return;
+      }
 
-        const getClientSecret = async () => {
-            try {
-                const response = await axios.post('', null, {
-                    params: { total: totalInCents },
-                });
-                if (!cancelled) {
-                    setClientSecret(response.data.clientSecret);
-                    setError(null);
-                }
-            } catch (err) {
-                // Previously this only logged to the console, so a dead payments
-                // endpoint left the Buy button silently inert with no user feedback.
-                console.error('Error fetching client secret: ', err);
-                if (!cancelled) {
-                    setClientSecret(null);
-                    setError(
-                        err.response?.data?.error ??
-                        'Could not reach the payment service. Please try again later.'
-                    );
-                }
-            }
-        };
+      try {
+        const result = await createPaymentIntent({
+          amountCents,
+          correlationId: correlationId.current,
+        });
 
-        getClientSecret();
+        if (signal.cancelled) return;
 
-        // Guard against an out-of-order response overwriting newer state when the
-        // basket changes quickly.
-        return () => { cancelled = true; };
-    }, [basket, totalInCents]);
+        setClientSecret(result.clientSecret);
+        setSetupError(null);
+      } catch (error) {
+        if (signal.cancelled) return;
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+        // The service already logged the cause. What matters here is that the
+        // failure reaches the screen: the original code only console.logged it,
+        // so a dead payments endpoint left the Buy button permanently disabled
+        // with no explanation anywhere in the UI.
+        setClientSecret(null);
+        setSetupError(error.message);
+      }
+    },
+    []
+  );
 
-        if (!stripe || !elements || !clientSecret || processing) {
-            return;
-        }
+  useEffect(() => {
+    // A cancellation flag rather than AbortController, because we are guarding
+    // against a stale RESPONSE being applied, not trying to cancel the request.
+    // Changing the cart quickly can leave two requests in flight, and the older
+    // one must not overwrite the newer client secret.
+    const signal = { cancelled: false };
 
-        setProcessing(true);
-        setError(null);
+    requestClientSecret(totalCents, signal);
 
-        try {
-            const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
-                clientSecret,
-                { payment_method: { card: elements.getElement(CardElement) } }
-            );
+    return () => {
+      signal.cancelled = true;
+    };
+  }, [totalCents, requestClientSecret]);
 
-            // A declined card returns an error and NO paymentIntent. The previous
-            // code went straight to paymentIntent.id and threw a TypeError here.
-            if (stripeError) {
-                setError(stripeError.message);
-                setProcessing(false);
-                return;
-            }
+  // Checkout requires an account, because orders are written to
+  // users/{uid}/orders and the Firestore rules reject an unauthenticated write.
+  // Without this guard the shopper reaches the card form, pays, and only then
+  // hits a permission error - after the money has moved.
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-            const ordersCollection = collection(db, 'users', user.uid, 'orders');
-            const orderDoc = doc(ordersCollection, paymentIntent.id);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-            // Awaited so we do not navigate to /orders before the write lands.
-            await setDoc(orderDoc, {
-                basket: basket,
-                amount: paymentIntent.amount,
-                created: paymentIntent.created,
-            });
-
-            setSucceeded(true);
-            setError(null);
-            setProcessing(false);
-
-            dispatch({ type: 'EMPTY_CART' });
-
-            navigate('/orders', { replace: true });
-        } catch (err) {
-            console.error('Payment failed: ', err);
-            setError('Something went wrong while processing your payment.');
-            setProcessing(false);
-        }
+    if (!stripe || !elements || !clientSecret || processing || succeeded) {
+      return;
     }
 
-    const handleChange = event => {
-        // listen for any changes in the CardElement
-        // and display any errors as the customer types their card details
-        setDisabled(event.empty);
-        setError(event.error ? event.error.message : "");
+    setProcessing(true);
+    setCardError(null);
+
+    const log = logger.child({ correlationId: correlationId.current });
+
+    try {
+      const { paymentIntent, error: stripeError } = await stripe.confirmCardPayment(
+        clientSecret,
+        { payment_method: { card: elements.getElement(CardElement) } }
+      );
+
+      // A declined card returns an error and NO paymentIntent. Reading
+      // paymentIntent.id here threw a TypeError, so a perfectly ordinary
+      // decline surfaced as a crash instead of "your card was declined".
+      if (stripeError) {
+        log.warn('payment.declined', {
+          code: stripeError.code,
+          declineCode: stripeError.decline_code,
+        });
+        setCardError(stripeError.message);
+        setProcessing(false);
+        return;
+      }
+
+      log.info('payment.succeeded', {
+        paymentIntentId: paymentIntent.id,
+        amountCents: paymentIntent.amount,
+      });
+
+      // The charge has already gone through at this point. If the order write
+      // fails the customer must be told explicitly - which is why createOrder
+      // throws a message saying so rather than failing quietly.
+      await createOrder({
+        userId: user.uid,
+        paymentIntentId: paymentIntent.id,
+        chargedAt: paymentIntent.created,
+        pricing,
+        correlationId: correlationId.current,
+      });
+
+      setSucceeded(true);
+      setProcessing(false);
+      dispatch({ type: ACTIONS.EMPTY_CART });
+      navigate('/orders', { replace: true });
+    } catch (error) {
+      log.error('payment.failed', { error: serializeError(error) });
+      setCardError(error.message ?? 'Something went wrong while processing your payment.');
+      setProcessing(false);
     }
+  };
+
+  const handleCardChange = (event) => {
+    setCardComplete(event.complete);
+    setCardError(event.error ? event.error.message : null);
+  };
+
+  const blockingError = setupError ?? cardError;
+  const canSubmit = Boolean(stripe && clientSecret && cardComplete && !processing && !succeeded);
+
+  if (itemCount === 0) {
+    return (
+      <div className="payment">
+        <div className="payment_container">
+          <h1>Checkout</h1>
+          <p>
+            Your cart is empty. <Link to="/">Find something to buy</Link>.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className='payment'>
-      <div className='payment_container'>
+    <div className="payment">
+      <div className="payment_container">
         <h1>
-            Checkout (<Link to='/checkout'>{basket?.length} items</Link>)
+          Checkout (<Link to="/checkout">{itemCount} items</Link>)
         </h1>
-        {/* Payment section: delivery address */}
-        <div className='payment_section'>
-            <div className='payment_title'>
-                <h3>Delivery Address</h3>
-            </div>
-            <div className='payment_address'>
-                <p>{user?.email}</p>
-                <p>Address Line 1</p>
-                <p>Address Line 2</p>
-            </div>
+
+        <div className="payment_section">
+          <div className="payment_title">
+            <h3>Delivery</h3>
+          </div>
+          <div className="payment_address">
+            <p>{user?.email}</p>
+            <DeliveryOptions />
+          </div>
         </div>
 
-        {/* Payment section: reviewing the items */}
-        <div className='payment_section'>
-            <div className='payment_title'>
-                <h3>Review Items and Delivery</h3>
-            </div>
-            <div className='payment_items'>
-                {/* All the products are going to show here */}
-                {/* pull the basket here */}
-                {basket.map((item, index) => (
-                    <CheckoutProduct
-                        key={`${item.id}-${index}`}
-                        id={item.id}
-                        title={item.title}
-                        description={item.description}
-                        image={item.image}
-                        price={item.price}
-                        rating={item.rating}
-                    />
-                ))}
-            </div>
+        <div className="payment_section">
+          <div className="payment_title">
+            <h3>Review items and delivery</h3>
+          </div>
+          <div className="payment_items">
+            {lines.map((line) => (
+              <CheckoutProduct key={line.productId} line={line} readOnly />
+            ))}
+          </div>
         </div>
 
-        {/* Payment section: payment method */}
-        <div className='payment_section'>
-            <div className='payment_title'>
-                <h3>Payment method</h3>
-            </div>
-            <div className='payment_details'>
-                {/* stripe implementation here */}
-                <form onSubmit={handleSubmit}>
-                    <CardElement onChange={handleChange} />
+        <div className="payment_section">
+          <div className="payment_title">
+            <h3>Payment method</h3>
+          </div>
+          <div className="payment_details">
+            <OrderSummary pricing={pricing} compact />
 
-                    <div className='payment_priceContainer'>
-                        <CurrencyFormat
-                            renderText={(value) => (
-                                <h3>Order Total: {value}</h3>
-                            )}
-                            decimalScale={2}
-                            value={getBasketTotal(basket)}
-                            displayType={'text'}
-                            thousandSeparator={true}
-                            prefix={'$'}
-                        />
-                        <button disabled={processing || disabled || succeeded || !clientSecret}>
-                            <span>{processing ? "Processing..." : "Buy Now"}</span>
-                        </button>
-                    </div>
+            <form onSubmit={handleSubmit}>
+              <CardElement onChange={handleCardChange} />
 
-                    {error && <div className='payment_error'>{error}</div>}
-                </form>
-            </div>
+              <div className="payment_priceContainer">
+                <h3>Order total: {format(totalCents)}</h3>
+                <button type="submit" disabled={!canSubmit}>
+                  <span>{processing ? 'Processing…' : 'Buy Now'}</span>
+                </button>
+              </div>
+
+              {blockingError && (
+                <div className="payment_error" role="alert">
+                  {blockingError}
+                </div>
+              )}
+            </form>
+          </div>
         </div>
-
       </div>
     </div>
-  )
+  );
 }
 
-export default Payment
+export default Payment;
