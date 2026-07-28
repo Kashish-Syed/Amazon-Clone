@@ -15,7 +15,7 @@ function Subtotal() {
   // One call, one source of truth. This component does not add anything up.
   const pricing = selectPricing(state);
 
-  const shortfallCents = FREE_SHIPPING_THRESHOLD_CENTS - pricing.netMerchandiseCents;
+  const shortfallCents = FREE_SHIPPING_THRESHOLD_CENTS - pricing.merchandiseCents;
   const qualifiesForFreeShipping = pricing.shipping.freeShippingApplied;
   const isEmpty = pricing.itemCount === 0;
 
