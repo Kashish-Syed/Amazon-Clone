@@ -29,7 +29,7 @@ export const SHIPPING_METHODS = {
     baseCents: 599,
     freeAboveCents: FREE_SHIPPING_THRESHOLD_CENTS,
     itemsIncluded: 10,
-    perExtraItemCents: 50,
+    perExtraItemCents: 150,
     estimate: '5-7 business days',
   },
   express: {
@@ -44,7 +44,7 @@ export const SHIPPING_METHODS = {
   },
   overnight: {
     label: 'Overnight',
-    baseCents: 2999,
+    baseCents: 29.99,
     freeAboveCents: null,
     itemsIncluded: 3,
     perExtraItemCents: 300,
