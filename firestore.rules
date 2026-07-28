@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// Access control for the Amazon Clone.
+//
+// Why this file exists: the project was created with "test mode" rules, which
+// expire automatically ~30 days after creation and then deny EVERY request.
+// Once they lapsed, the homepage's read of `products` started returning
+// PERMISSION_DENIED and the product grid silently rendered empty.
+//
+// These rules are permanent - they do not expire.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Catalogue: world-readable so signed-out visitors can browse.
+    // Writes are blocked from the client. Seed the catalogue from the Firebase
+    // console (or temporarily relax this rule while seeding).
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Orders live under the owning user and are private to that user.
+    // Payment.js writes here after Stripe confirms the card payment.
+    match /users/{userId}/orders/{orderId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // Orders are an immutable record once written.
+      allow update, delete: if false;
+    }
+
+    // Anything not matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

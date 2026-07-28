@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles';
 
 function Product({ id, title, description, image, price, rating}) {
 
-  const [state, dispatch] = useStateValue();
+  const [, dispatch] = useStateValue();
 
   const MAX_LENGTH = 100;
 
@@ -50,11 +50,13 @@ function Product({ id, title, description, image, price, rating}) {
         </p>
 
         <Typography sx={{ mt: 1 }}>
-          <StyledRating name="half-rating-read" value={rating} precision={0.1} readOnly />
+          {/* `rating` comes back from Firestore as a string on some documents;
+              MUI's Rating expects a number. */}
+          <StyledRating name="half-rating-read" value={Number(rating) || 0} precision={0.1} readOnly />
         </Typography>
       </div>
 
-      <img className='product_img' src={image} alt='Product Image'/>
+      <img className='product_img' src={image} alt={title}/>
       <button className='button-effect' onClick={addToCart}>Add to cart</button>
 
     </div>

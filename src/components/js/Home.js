@@ -47,9 +47,10 @@ function Home() {
         <Box sx={{ width:'100%'}}>
           <Grid container rowSpacing={1} columnSpacing={1.25}>
             {products.map((product) => (
-              <Grid container spacing={0.5} size={4}> 
-                <Product 
-                  key={product.id}
+              // The key belongs on the outermost element produced by map(),
+              // which is this Grid - not on the Product nested inside it.
+              <Grid container spacing={0.5} size={4} key={product.id}>
+                <Product
                   id={product.id}
                   title={product.title}
                   price={product.price}
