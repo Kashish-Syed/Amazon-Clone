@@ -40,11 +40,59 @@ jobs:
       - name: Test
         run: npm run test:ci
 
-      # The build needs the REACT_APP_* variables because Create React App
-      # inlines them at build time. These are all public values - the Firebase
-      # web config and the Stripe PUBLISHABLE key - so they are safe as repo
-      # variables. Nothing secret belongs here; the Stripe secret key lives in
-      # Supabase and never reaches the client bundle.
+      # WHY THIS STEP EXISTS
+      #
+      # Create React App inlines REACT_APP_* at BUILD time, and a missing one is
+      # not a build error - webpack substitutes undefined and compiles happily.
+      # Worse, GitHub renders an unset `vars.X` as an EMPTY STRING, and dotenv
+      # treats an already-present empty value as "already set", so it will not
+      # fall back to the committed .env. An unconfigured repository variable
+      # therefore silently strips the real value out of the bundle.
+      #
+      # Left unchecked that produces a green pipeline shipping an artifact that
+      # cannot reach Firebase or Stripe. Checking the variables here, before the
+      # build, is more reliable than inspecting the compiled bundle afterwards:
+      # config.js contains a hardcoded localhost fallback string that webpack
+      # bundles either way, so the output cannot distinguish a real value from
+      # the default.
+      - name: Check required build variables are configured
+        env:
+          REACT_APP_FIREBASE_API_KEY: ${{ vars.REACT_APP_FIREBASE_API_KEY }}
+          REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ vars.REACT_APP_FIREBASE_AUTH_DOMAIN }}
+          REACT_APP_FIREBASE_PROJECT_ID: ${{ vars.REACT_APP_FIREBASE_PROJECT_ID }}
+          REACT_APP_FIREBASE_APP_ID: ${{ vars.REACT_APP_FIREBASE_APP_ID }}
+          REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ vars.REACT_APP_STRIPE_PUBLISHABLE_KEY }}
+          REACT_APP_PAYMENTS_API_URL: ${{ vars.REACT_APP_PAYMENTS_API_URL }}
+        run: |
+          missing=""
+
+          for name in \
+            REACT_APP_FIREBASE_API_KEY \
+            REACT_APP_FIREBASE_AUTH_DOMAIN \
+            REACT_APP_FIREBASE_PROJECT_ID \
+            REACT_APP_FIREBASE_APP_ID \
+            REACT_APP_STRIPE_PUBLISHABLE_KEY \
+            REACT_APP_PAYMENTS_API_URL
+          do
+            if [ -z "$(printenv "$name")" ]; then
+              missing="$missing $name"
+            fi
+          done
+
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository variables:$missing"
+            echo "Add them under Settings > Secrets and variables > Actions > Variables."
+            echo "All of these are public by design: the Firebase web config and the"
+            echo "Stripe PUBLISHABLE key. Never add a Stripe secret key here."
+            exit 1
+          fi
+
+          echo "All required build variables are set."
+
+      # These are all public values - the Firebase web config and the Stripe
+      # PUBLISHABLE key - so they are safe as repository variables. Nothing
+      # secret belongs here; the Stripe secret key lives in Supabase and never
+      # reaches the client bundle.
       - name: Build
         run: npm run build
         env:
@@ -60,6 +108,37 @@ jobs:
           # Warnings fail the build. A warning nobody fails on is a warning
           # nobody reads.
           CI: true
+
+      # Belt and braces: confirm the values actually reached the bundle. The
+      # pre-build check proves the variables were set; this proves CRA inlined
+      # them. Only values that cannot also appear as a hardcoded default are
+      # worth asserting on here.
+      - name: Verify configuration was inlined into the bundle
+        run: |
+          bundle=$(ls build/static/js/main.*.js 2>/dev/null | head -1)
+
+          if [ -z "$bundle" ]; then
+            echo "::error::No main bundle was produced."
+            exit 1
+          fi
+
+          failed=0
+
+          if ! grep -q 'firebaseapp\.com' "$bundle"; then
+            echo "::error::Firebase authDomain did not reach the bundle."
+            failed=1
+          fi
+
+          if ! grep -qE 'pk_(test|live)_' "$bundle"; then
+            echo "::error::Stripe publishable key did not reach the bundle."
+            failed=1
+          fi
+
+          if [ "$failed" -eq 0 ]; then
+            echo "Firebase and Stripe configuration is present in the bundle."
+          fi
+
+          exit $failed
 
   secret-scan:
     name: Check for committed secrets
