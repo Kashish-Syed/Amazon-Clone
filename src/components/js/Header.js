@@ -1,20 +1,35 @@
 import React from 'react';
-import '../css/Header.css';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
+import '../css/Header.css';
 import { useStateValue } from './StateProvider';
+import { selectItemCount } from './reducer';
 import { auth } from '../../database/firebase';
 import { signOut } from 'firebase/auth';
+import { logger, serializeError } from '../../lib/logger';
 
 function Header() {
-    const [{ basket, user}] = useStateValue();
+    const [state] = useStateValue();
+    const { user } = state;
 
-    const handleAuthentication = () => {
-        if (user) {
-            signOut(auth);
+    // Total UNITS, not distinct products. `basket.length` counted lines, so a
+    // cart holding three of one item displayed "1".
+    const itemCount = selectItemCount(state);
+
+    const handleAuthentication = async () => {
+        if (!user) return;
+
+        try {
+            await signOut(auth);
+            logger.info('auth.signed_out');
+        } catch (error) {
+            // signOut returns a promise. Ignoring it meant a failed sign-out
+            // left the user apparently signed out in the UI while still holding
+            // a live session.
+            logger.error('auth.sign_out_failed', { error: serializeError(error) });
         }
-    }
+    };
 
   return (
     <div className='header'>
@@ -23,7 +38,7 @@ function Header() {
         </Link>
       <div className='header_search'>
         <input className='header_searchInput' type="text" placeholder='Search Here'/>
-        <SearchIcon className='header_searchIcon'/>   
+        <SearchIcon className='header_searchIcon'/>
       </div>
 
       <div className='header_nav'>
@@ -33,7 +48,7 @@ function Header() {
             <Link to={user ? '/' : '/login'}>
                 <div onClick={handleAuthentication} className='header_option header_border'>
                     <span className='header_optionLineOne'>
-                        {user ? `Hello ${user?.email.split('@')[0]}` : 'Hello Guest'}
+                        {user ? `Hello ${user?.email?.split('@')[0] ?? 'there'}` : 'Hello Guest'}
                     </span>
                     <span className='header_optionLineTwo'>
                         {user ? 'Sign Out' : 'Sign In'}
@@ -64,7 +79,7 @@ function Header() {
                 <div className='header_optionBasket header_border'>
                     <ShoppingCartIcon />
                     <span className='header_optionLineTwo header_basketCount'>
-                        { basket?.length}
+                        {itemCount}
                     </span>
                 </div>
             </Link>

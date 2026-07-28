@@ -5,3 +5,6 @@
 .orders > h1 {
     margin: 30px 0;
 }
+.orders_error {
+  color: #b12704;
+}

@@ -66,3 +66,13 @@
     margin-top: 10px;
     border-color: darkgray;
 }
+
+.login_error {
+  padding: 0.5rem 0.6rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #b12704;
+  background-color: #fff4f4;
+  border: 1px solid #f5c6c6;
+  border-radius: 4px;
+}

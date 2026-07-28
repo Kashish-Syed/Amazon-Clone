@@ -154,6 +154,46 @@ Stripe test mode. Use any future expiry and any CVC.
 | `npm start` | Dev server on <http://localhost:3000> |
 | `npm run build` | Production build into `build/` |
 | `npm test` | Test runner (watch mode) |
+| `npm run test:ci` | Single test run; warnings fail |
+| `npm run test:coverage` | Single run with a coverage report |
+| `npm run lint` | ESLint over `src/` and `scripts/`, zero warnings tolerated |
+| `npm run seed:products` | Seed the catalogue from `scripts/products.seed.json` (dry run without `-- --apply`) |
+
+CI runs lint, tests and the build on every push and pull request
+(`.github/workflows/ci.yml`), plus a grep for accidentally committed Stripe
+secret keys.
+
+## Code layout
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full picture. In short,
+dependencies point downwards only:
+
+```
+components/   React. Rendering and events. No arithmetic, no SDKs.
+services/     Firestore and Stripe live behind here.
+domain/       Business rules. Pure functions over integer cents.
+lib/ config/  Money, logging, HTTP, environment.
+```
+
+Two rules carry most of the weight:
+
+- **Money is always an integer number of cents.** Never a float, never a string.
+  `lib/money.js` is the only place that converts.
+- **Totals come from `selectPricing(state)`**, never from arithmetic in a
+  component. `domain/pricing.js` is the single definition of what an order costs.
+
+### Debugging a deployed build
+
+Logs are structured and buffered in memory. From the browser console:
+
+```js
+__APP_LOGS__()                  // recent entries, oldest first
+__APP_SET_LOG_LEVEL__('debug')  // more detail, no rebuild needed
+```
+
+Each checkout attempt carries a correlation id that also goes to the payments
+function as `X-Correlation-Id`, so the browser logs and the Supabase function
+logs can be lined up.
 
 Bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 Note that `react-scripts` is no longer maintained; a future move to Vite is worth

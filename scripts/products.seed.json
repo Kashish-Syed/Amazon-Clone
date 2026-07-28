@@ -1,0 +1,101 @@
+[
+  {
+    "slug": "hair-mask",
+    "title": "Hair Mask",
+    "description": "Deep-conditioning treatment that repairs dry, damaged hair in one wash.",
+    "image": "/images/product1.jpg",
+    "price": 24.77,
+    "rating": 4.8,
+    "stock": 18
+  },
+  {
+    "slug": "anua-heartleaf-cleansing-oil",
+    "title": "Anua Heartleaf Cleansing Oil",
+    "description": "Gentle first-cleanse oil that melts away sunscreen and makeup without stripping skin.",
+    "image": "/images/anua.jpg",
+    "price": 19,
+    "rating": 4,
+    "stock": 32
+  },
+  {
+    "slug": "laneige-lip-sleeping-mask",
+    "title": "Laneige Lip Sleeping Mask",
+    "description": "Overnight lip treatment with vitamin C and antioxidants for soft, smooth lips by morning.",
+    "image": "/images/laneige_lipbalm.jpg",
+    "price": 24.78,
+    "rating": 5,
+    "stock": 7
+  },
+  {
+    "slug": "eva-nyc-therapy-session-hair-mask",
+    "title": "Eva NYC Therapy Session Hair Mask",
+    "description": "Weekly repair mask with argan oil that softens frizz and restores shine.",
+    "image": "/images/eva-nyc.jpg",
+    "price": 24.99,
+    "rating": 4.2,
+    "stock": 12
+  },
+  {
+    "slug": "stoneware-dinnerware-set",
+    "title": "16-Piece Stoneware Dinnerware Set",
+    "description": "Service for four in reactive-glaze stoneware. Dishwasher and microwave safe.",
+    "image": "/images/crockery.jpg",
+    "price": 30.49,
+    "rating": 4,
+    "stock": 5
+  },
+  {
+    "slug": "automatic-pet-feeder",
+    "title": "Automatic Pet Feeder, 6L",
+    "description": "Programmable feeder with portion control, voice recorder and battery backup.",
+    "image": "/images/automatic_feeder.jpg",
+    "price": 39.99,
+    "rating": 3.5,
+    "stock": 9
+  },
+  {
+    "slug": "eva-nyc-rescue-hair-oil",
+    "title": "Eva NYC Rescue Hair Oil",
+    "description": "Lightweight finishing oil that tames flyaways and adds shine without weighing hair down.",
+    "image": "/images/eva-nyc.jpg",
+    "price": 29.99,
+    "rating": 4,
+    "stock": 21
+  },
+  {
+    "slug": "leather-crossbody-bag",
+    "title": "Leather Crossbody Bag",
+    "description": "Compact full-grain leather bag with an adjustable strap and card slots.",
+    "image": "/images/crossbody_bag.jpg",
+    "price": 42,
+    "rating": 4.4,
+    "stock": 4
+  },
+  {
+    "slug": "ipad-folio-cover-11",
+    "title": "iPad Folio Cover, 11\"",
+    "description": "Slim magnetic folio with auto sleep/wake and a built-in stand for two viewing angles.",
+    "image": "/images/ipad_cover.avif",
+    "price": 27.95,
+    "rating": 4.1,
+    "stock": 15
+  },
+  {
+    "slug": "minimalist-brass-keychain",
+    "title": "Minimalist Brass Keychain",
+    "description": "Solid brass quick-release keychain that develops a natural patina over time.",
+    "image": "/images/keychain.jpg",
+    "price": 12.5,
+    "rating": 4.6,
+    "stock": 40
+  },
+  {
+    "slug": "clumping-cat-litter-20lb",
+    "title": "Clumping Cat Litter, 20 lb",
+    "description": "Low-dust clay litter with hard clumping and seven-day odour control.",
+    "image": "/images/litter.jpg",
+    "price": 18.99,
+    "rating": 4.3,
+    "stock": 0
+  }
+]

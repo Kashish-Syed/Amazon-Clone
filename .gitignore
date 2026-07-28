@@ -24,3 +24,10 @@ yarn-error.log*
 
 # firebase deploy cache
 .firebase/
+
+# firebase/emulator debug output - written into the working tree on every run
+*debug.log
+*debug*.log
+firestore-debug.log
+database-debug.log
+pubsub-debug.log

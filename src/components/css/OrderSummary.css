@@ -1,0 +1,38 @@
+.orderSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.orderSummary--compact {
+  font-size: 0.85rem;
+}
+
+.orderSummary_row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.orderSummary_row--credit {
+  color: #067d62;
+}
+
+.orderSummary_row--total {
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-top: 1px solid #ddd;
+}
+
+.orderSummary_note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #565959;
+}
+
+.orderSummary_note--warn {
+  color: #b12704;
+}

@@ -1,44 +1,79 @@
 import React, { useEffect, useState } from 'react';
 import '../css/Orders.css';
-import { db } from '../../database/firebase';
 import { useStateValue } from './StateProvider';
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { subscribeToOrders } from '../../services/orderService';
 import Order from './Order';
+import { newCorrelationId } from '../../lib/logger';
+
+const STATUS = {
+  LOADING: 'loading',
+  READY: 'ready',
+  SIGNED_OUT: 'signed_out',
+  FAILED: 'failed',
+};
 
 function Orders() {
-    const [{ user }] = useStateValue();
-    const [orders, setOrders] = useState([]);
+  const [{ user }] = useStateValue();
+  const [orders, setOrders] = useState([]);
+  const [status, setStatus] = useState(STATUS.LOADING);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (user) {
-            const ordersRef = collection(db, 'users', user.uid, 'orders');
-            const ordersQuery = query(ordersRef, orderBy('created', 'desc'));
-    
-            const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
-                setOrders(snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    data: doc.data()
-                })));
-            });
-    
-            // Cleanup listener on unmount
-            return () => unsubscribe();
-        } else {
-            setOrders([]);
-        }
-    }, [user]);
+  useEffect(() => {
+    if (!user) {
+      setOrders([]);
+      setStatus(STATUS.SIGNED_OUT);
+      return undefined;
+    }
+
+    setStatus(STATUS.LOADING);
+
+    const unsubscribe = subscribeToOrders({
+      userId: user.uid,
+      correlationId: newCorrelationId(),
+      onChange: (next) => {
+        setOrders(next);
+        setStatus(STATUS.READY);
+      },
+      onError: (caught) => {
+        // onSnapshot only reports errors if you pass this callback. Without it
+        // a rules rejection left the page sitting on "You have no orders yet",
+        // which reads as "you have never bought anything".
+        setError(
+          caught?.code === 'permission-denied'
+            ? 'You are not allowed to read these orders. Check the Firestore rules.'
+            : 'We could not load your orders. Please refresh to try again.'
+        );
+        setStatus(STATUS.FAILED);
+      },
+    });
+
+    return () => unsubscribe();
+  }, [user]);
 
   return (
-    <div className='orders'>
+    <div className="orders">
       <h1>Your Orders</h1>
+
       <div className="orders_order">
-        {orders.length === 0 && <p>You have no orders yet.</p>}
-        {orders?.map(order => (
-            <Order key={order.id} order={order} />
-        ))}
+        {status === STATUS.LOADING && <p role="status">Loading your orders&hellip;</p>}
+
+        {status === STATUS.SIGNED_OUT && <p>Sign in to see your orders.</p>}
+
+        {status === STATUS.FAILED && (
+          <p role="alert" className="orders_error">
+            {error}
+          </p>
+        )}
+
+        {status === STATUS.READY && orders.length === 0 && <p>You have no orders yet.</p>}
+
+        {status === STATUS.READY &&
+          orders.map((order) => <Order key={order.id} order={order} />)}
       </div>
     </div>
-  )
+  );
 }
 
-export default Orders
+export default Orders;
+
+export { STATUS };

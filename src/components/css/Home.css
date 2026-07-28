@@ -28,3 +28,27 @@
     padding: 10px; /* Space between the grid and page edges */
     max-width: 1290px;
 }
+
+/* Loading / empty / error states for the product grid. Previously all three
+   rendered as nothing at all, which is why a permissions failure looked
+   identical to a slow network. */
+.home_status {
+  padding: 2rem;
+  font-size: 0.95rem;
+  color: #565959;
+  text-align: center;
+}
+
+.home_status--error {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  color: #b12704;
+}
+
+.home_status code {
+  padding: 0.1rem 0.3rem;
+  background-color: #f0f2f2;
+  border-radius: 3px;
+}
