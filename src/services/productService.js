@@ -51,9 +51,16 @@ export async function fetchProducts({ correlationId } = {}) {
       error: serializeError(error),
     });
 
-    // Degrade gracefully rather than taking the whole homepage down when the
-    // catalogue read fails.
-    return { products: [], rejected: [] };
+    // permission-denied is by far the most common cause here and has a
+    // specific fix, so it gets its own message instead of a generic one.
+    // Firestore "test mode" rules expire ~30 days after a project is created
+    // and then deny everything, which is exactly how this app broke before.
+    const message =
+      error?.code === 'permission-denied'
+        ? 'Not allowed to read the product catalogue. Check firestore.rules and deploy them with `firebase deploy --only firestore:rules`.'
+        : 'Could not load the product catalogue.';
+
+    throw new CatalogUnavailableError(message, { cause: error, code: error?.code });
   }
 
   const raw = snapshot.docs.map((document) => ({ id: document.id, ...document.data() }));

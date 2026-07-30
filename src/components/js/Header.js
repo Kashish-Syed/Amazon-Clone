@@ -4,6 +4,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
 import '../css/Header.css';
 import { useStateValue } from './StateProvider';
+import { selectItemCount } from './reducer';
 import { auth } from '../../database/firebase';
 import { signOut } from 'firebase/auth';
 import { logger, serializeError } from '../../lib/logger';
@@ -14,7 +15,7 @@ function Header() {
 
     // Total UNITS, not distinct products. `basket.length` counted lines, so a
     // cart holding three of one item displayed "1".
-    const itemCount = state.lines.length;
+    const itemCount = selectItemCount(state);
 
     const handleAuthentication = async () => {
         if (!user) return;

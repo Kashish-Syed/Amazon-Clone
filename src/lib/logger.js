@@ -101,7 +101,7 @@ function emit(level, event, fields, bindings) {
     if (buffer.length > bufferLimit) buffer.shift();
   }
 
-  if (LEVELS[level] <= threshold) return entry;
+  if (LEVELS[level] < threshold) return entry;
 
   const method = CONSOLE_METHOD[level] ?? 'log';
   const { event: name, ...rest } = entry;
