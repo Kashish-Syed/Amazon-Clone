@@ -33,7 +33,7 @@ function Payment() {
   const correlationId = useRef(newCorrelationId());
 
   const pricing = selectPricing(state);
-  const { totalCents, itemCount } = pricing;
+  const { totalCents, netMerchandiseCents, itemCount } = pricing;
 
   const requestClientSecret = useCallback(
     async (amountCents, signal) => {
@@ -73,12 +73,12 @@ function Payment() {
     // one must not overwrite the newer client secret.
     const signal = { cancelled: false };
 
-    requestClientSecret(totalCents, signal);
+    requestClientSecret(netMerchandiseCents, signal);
 
     return () => {
       signal.cancelled = true;
     };
-  }, [totalCents, requestClientSecret]);
+  }, [netMerchandiseCents, requestClientSecret]);
 
   // Wait for Firebase to answer before deciding anything about the session.
   // On a hard refresh React renders before onAuthStateChanged has fired, so
