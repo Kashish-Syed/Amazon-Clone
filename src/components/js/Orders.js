@@ -28,7 +28,7 @@ function Orders() {
     setStatus(STATUS.LOADING);
 
     const unsubscribe = subscribeToOrders({
-      userId: user.uid,
+      userId: user.id,
       correlationId: newCorrelationId(),
       onChange: (next) => {
         setOrders(next);
