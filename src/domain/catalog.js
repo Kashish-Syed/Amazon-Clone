@@ -94,7 +94,7 @@ export function normalizeProduct(raw) {
 
   const rating = readNumber(raw.rating);
   const stock = readNumber(raw.stock);
-  const stockLevel = stock === null ? DEFAULT_STOCK : Math.max(Math.trunc(stock), 0);
+const stockLevel = stock == null ? DEFAULT_STOCK : Math.max(Math.trunc(stock), 0);
 
   return {
     id,
