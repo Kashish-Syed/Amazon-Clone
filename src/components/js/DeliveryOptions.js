@@ -58,7 +58,7 @@ function DeliveryOptions() {
             />
             <span>
               <strong>{method.label}</strong> &mdash; {method.estimate} (
-              {format(method.baseCents)})
+              {format(method.baseCents / 100)})
             </span>
           </label>
         ))}
