@@ -38,6 +38,16 @@ export const initialState = {
 
   user: null,
 
+  /**
+   * False until Firebase has told us whether anyone is signed in.
+   *
+   * `user: null` on its own is ambiguous - it means both "signed out" and "we
+   * do not know yet", and onAuthStateChanged does not fire until after the
+   * first render. Any route that redirects on `!user` will bounce a signed-in
+   * shopper to the login page on a hard refresh unless it waits for this.
+   */
+  authResolved: false,
+
   checkout: {
     promoCode: '',
     regionCode: DEFAULT_REGION_CODE,
@@ -109,7 +119,9 @@ const reducer = (state, action) => {
       return { ...state, lines: [], checkout: { ...state.checkout, promoCode: '' } };
 
     case ACTIONS.SET_USER:
-      return { ...state, user: action.user ?? null };
+      // Auth is resolved either way: being told "nobody is signed in" is just
+      // as much of an answer as being handed a user.
+      return { ...state, user: action.user ?? null, authResolved: true };
 
     case ACTIONS.SET_PROMO_CODE:
       return { ...state, checkout: { ...state.checkout, promoCode: action.code ?? '' } };

@@ -13,12 +13,20 @@ const STATUS = {
 };
 
 function Orders() {
-  const [{ user }] = useStateValue();
+  const [{ user, authResolved }] = useStateValue();
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState(STATUS.LOADING);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Until Firebase has answered, `user` being null means nothing. Announcing
+    // "Sign in to see your orders" here makes the page flash that message at a
+    // shopper who is in fact signed in.
+    if (!authResolved) {
+      setStatus(STATUS.LOADING);
+      return undefined;
+    }
+
     if (!user) {
       setOrders([]);
       setStatus(STATUS.SIGNED_OUT);
@@ -48,7 +56,7 @@ function Orders() {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, authResolved]);
 
   return (
     <div className="orders">

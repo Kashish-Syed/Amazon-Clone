@@ -14,7 +14,7 @@ import { logger, newCorrelationId, serializeError } from '../../lib/logger';
 
 function Payment() {
   const [state, dispatch] = useStateValue();
-  const { lines, user } = state;
+  const { lines, user, authResolved } = state;
 
   const stripe = useStripe();
   const elements = useElements();
@@ -79,6 +79,21 @@ function Payment() {
       signal.cancelled = true;
     };
   }, [totalCents, requestClientSecret]);
+
+  // Wait for Firebase to answer before deciding anything about the session.
+  // On a hard refresh React renders before onAuthStateChanged has fired, so
+  // `user` is null and `authResolved` is false. Anything that redirects on
+  // !user before this point sends a perfectly well signed-in shopper to the
+  // login page every time they reload.
+  if (!authResolved) {
+    return (
+      <div className="payment">
+        <div className="payment_container">
+          <p role="status">Checking your session&hellip;</p>
+        </div>
+      </div>
+    );
+  }
 
   // Checkout requires an account, because orders are written to
   // users/{uid}/orders and the Firestore rules reject an unauthenticated write.
