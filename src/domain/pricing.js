@@ -125,7 +125,7 @@ export function priceOrder({
   const tax = taxEnabled
     ? computeTax({
         taxableMerchandiseCents: netMerchandiseCents,
-        shippingCents: shippingChargedCents,
+        shippingCents: shippingQuote.shippingCents,
         regionCode,
       })
     : {
