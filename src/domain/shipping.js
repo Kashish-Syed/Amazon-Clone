@@ -44,7 +44,7 @@ export const SHIPPING_METHODS = {
   },
   overnight: {
     label: 'Overnight',
-    baseCents: 29.99,
+    baseCents: 2999,
     freeAboveCents: null,
     itemsIncluded: 3,
     perExtraItemCents: 300,
