@@ -21,7 +21,7 @@ export const PLACEHOLDER_IMAGE = '/images/product1.jpg';
  * Deliberately finite: treating unknown stock as unlimited lets the cart
  * promise quantities the warehouse may not have.
  */
-export const DEFAULT_STOCK = 3;
+export const DEFAULT_STOCK = 10;
 
 /** Ratings are on a five-point scale. */
 export const MAX_RATING = 5;
