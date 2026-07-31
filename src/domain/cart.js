@@ -40,7 +40,7 @@ export const MAX_LINE_QUANTITY = 10;
  * @returns {number}
  */
 export function maxQuantityFor(product) {
-  const stock = Number.isFinite(product?.stock) ? product.stock : 0;
+  const stock = Number.isFinite(product?.stock) ? product.stock : MAX_LINE_QUANTITY;
   return Math.max(Math.min(stock, MAX_LINE_QUANTITY), 0);
 }
 
