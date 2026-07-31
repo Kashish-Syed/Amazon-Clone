@@ -71,7 +71,6 @@ export function selectPricing(state) {
     lines: state.lines,
     promoCode: state.checkout.promoCode,
     regionCode: state.checkout.regionCode,
-    shippingMethodId: state.checkout.shippingMethodId,
     features: config.features,
   });
 }
