@@ -80,11 +80,16 @@ function Payment() {
     };
   }, [totalCents, requestClientSecret]);
 
-  // Wait for Firebase to answer before deciding anything about the session.
-  // On a hard refresh React renders before onAuthStateChanged has fired, so
-  // `user` is null and `authResolved` is false. Anything that redirects on
-  // !user before this point sends a perfectly well signed-in shopper to the
-  // login page every time they reload.
+  // Checkout requires an account, because orders are written to
+  // users/{uid}/orders and the Firestore rules reject an unauthenticated write.
+  // Without this guard the shopper reaches the card form, pays, and only then
+  // hits a permission error - after the money has moved.
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Hold the card form back until Firebase has confirmed the session, so it is
+  // never rendered against a user we have not finished loading.
   if (!authResolved) {
     return (
       <div className="payment">
@@ -93,14 +98,6 @@ function Payment() {
         </div>
       </div>
     );
-  }
-
-  // Checkout requires an account, because orders are written to
-  // users/{uid}/orders and the Firestore rules reject an unauthenticated write.
-  // Without this guard the shopper reaches the card form, pays, and only then
-  // hits a permission error - after the money has moved.
-  if (!user) {
-    return <Navigate to="/login" replace />;
   }
 
   const handleSubmit = async (event) => {
