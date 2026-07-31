@@ -14,7 +14,7 @@ function Header() {
 
     // Total UNITS, not distinct products. `basket.length` counted lines, so a
     // cart holding three of one item displayed "1".
-    const itemCount = state.lines.length;
+    const itemCount = state.lines.reduce((sum, line) => sum + line.quantity, 0);
 
     const handleAuthentication = async () => {
         if (!user) return;
