@@ -53,7 +53,7 @@ export async function fetchProducts({ correlationId } = {}) {
 
     // Degrade gracefully rather than taking the whole homepage down when the
     // catalogue read fails.
-    return { products: [], rejected: [] };
+    throw new CatalogUnavailableError('Failed to fetch products from Firestore', { cause: error });
   }
 
   const raw = snapshot.docs.map((document) => ({ id: document.id, ...document.data() }));
