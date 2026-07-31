@@ -27,14 +27,13 @@ function Orders() {
 
     setStatus(STATUS.LOADING);
 
-    const unsubscribe = subscribeToOrders({
-      userId: user.uid,
-      correlationId: newCorrelationId(),
-      onChange: (next) => {
+    const unsubscribe = subscribeToOrders(
+      user.uid,
+      (next) => {
         setOrders(next);
         setStatus(STATUS.READY);
       },
-      onError: (caught) => {
+      (caught) => {
         // onSnapshot only reports errors if you pass this callback. Without it
         // a rules rejection left the page sitting on "You have no orders yet",
         // which reads as "you have never bought anything".
@@ -45,7 +44,8 @@ function Orders() {
         );
         setStatus(STATUS.FAILED);
       },
-    });
+      newCorrelationId()
+    );
 
     return () => unsubscribe();
   }, [user]);
