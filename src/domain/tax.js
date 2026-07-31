@@ -23,7 +23,7 @@ import { percentOf } from '../lib/money';
 /** @type {Record<string, TaxRegion>} */
 export const TAX_REGIONS = {
   'US-CA': { label: 'California', rate: 0.0725, taxShipping: false },
-  'US-NY': { label: 'New York', rate: 0.08875, taxShipping: true },
+  'US-NY': { label: 'New York', rate: 0.08875, taxShipping: false },
   'US-TX': { label: 'Texas', rate: 0.0625, taxShipping: true },
   'US-WA': { label: 'Washington', rate: 0.065, taxShipping: true },
   'US-OR': { label: 'Oregon', rate: 0, taxShipping: false },
