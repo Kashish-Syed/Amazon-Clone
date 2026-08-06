@@ -55,10 +55,10 @@ export async function fetchProducts({ correlationId } = {}) {
     // specific fix, so it gets its own message instead of a generic one.
     // Firestore "test mode" rules expire ~30 days after a project is created
     // and then deny everything, which is exactly how this app broke before.
-    const message =
+    throw new CatalogUnavailableError(
       error?.code === 'permission-denied'
         ? 'Not allowed to read the product catalogue. Check firestore.rules and deploy them with `firebase deploy --only firestore:rules`.'
-        : 'Could not load the product catalogue.';
+        : 'Could not load the product catalogue.'
 
     throw new CatalogUnavailableError(message, { cause: error, code: error?.code });
   }
