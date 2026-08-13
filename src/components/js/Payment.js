@@ -70,10 +70,11 @@ function Payment() {
     // A cancellation flag rather than AbortController, because we are guarding
     // against a stale RESPONSE being applied, not trying to cancel the request.
     // Changing the cart quickly can leave two requests in flight, and the older
+
     // one must not overwrite the newer client secret.
     const signal = { cancelled: false };
 
-    requestClientSecret(netMerchandiseCents, signal);
+    requestClientSecret(totalCents, signal);
 
     return () => {
       signal.cancelled = true;
