@@ -73,7 +73,7 @@ function Payment() {
     // one must not overwrite the newer client secret.
     const signal = { cancelled: false };
 
-    requestClientSecret(netMerchandiseCents, signal);
+    requestClientSecret(totalCents, signal);
 
     return () => {
       signal.cancelled = true;
