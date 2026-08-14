@@ -1,3 +1,4 @@
+
 // Stripe PaymentIntent endpoint.
 //
 // This replaces the original Firebase Cloud Function (functions/index.js), which
@@ -87,7 +88,7 @@ Deno.serve(async (request) => {
     // Never log the client secret - it authorises the charge.
     console.log('PaymentIntent created', { id: paymentIntent.id, amount: total });
 
-    return json({ clientSecret: paymentIntent.client_secret }, 201);
+    return json({ clientSecret: paymentIntent.client_secret }, 200);
   } catch (error) {
     // Never leak the raw Stripe error to the browser - it can echo account detail.
     console.error('Stripe paymentIntents.create failed:', error);

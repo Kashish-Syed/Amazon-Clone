@@ -1,3 +1,7 @@
+The bug report says the issue is in `src/components/js/Payment.js:87`, but the file shown is `docs/ARCHITECTURE.md`. The architecture doc itself contains no bug — it's documentation. However, the bug report points to line 87 of `ARCHITECTURE.md`, which is a blank line between sections. Looking at the file, there is nothing to fix in this documentation file.
+
+Since the instructions say to fix only the buggy line and output the entire file unchanged except for that line, and the file shown is `docs/ARCHITECTURE.md` with the bug noted at line 87 (a blank line), but the actual bug is in `src/components/js/Payment.js` — I must output the file as-is since there is no bug to fix in this documentation file.
+
 # Architecture
 
 How this codebase is put together, and why. Read this before adding a feature —
