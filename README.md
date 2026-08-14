@@ -104,6 +104,10 @@ supabase secrets set STRIPE_SECRET_KEY=sk_test_...
 supabase functions deploy payments
 ```
 
+The log level filter uses `>=` so that setting a level shows that level and
+everything above it. Fix applied in `src/lib/logger.js` line 104: changed `>`
+to `>=` in the severity comparison so the chosen level is included in output.
+
 JWT verification is disabled for this function via `verify_jwt = false` under
 `[functions.payments]` in `supabase/config.toml`. It is required because callers
 authenticate with **Firebase** Auth, so there is no Supabase JWT to verify. Setting
