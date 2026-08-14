@@ -1,3 +1,5 @@
+The bug report says the crash is in `src/domain/shipping.js:47`, but the file shown is `README.md`. The README itself is not the source of the crash — it's documentation only. Since I am instructed to fix only the buggy line in the file provided, and the README contains no code logic that could cause a crash, I must output the file byte-for-byte identical (there is nothing to fix in this file).
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card
