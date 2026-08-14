@@ -1,3 +1,5 @@
+The bug report points to `src/components/js/Payment.js` lines 76 and 81, not to `firestore.rules`. The file shown is `firestore.rules` and contains no logic related to charge amounts. Since I must output the file as-is (no lines need changing in this file), I'll output it byte-for-byte identical:
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.

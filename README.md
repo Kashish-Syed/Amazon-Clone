@@ -1,3 +1,7 @@
+Looking at the bug report, the issue is in `src/components/js/Payment.js` at lines 76 and 81, not in the README. The README file itself has no bug to fix — it's documentation. Since I'm only shown the README and told to fix it, but the bug is actually in a JavaScript file not shown to me, I must output the README exactly as-is since there are no bugs in this file to fix.
+
+However, re-reading the instructions: "Output the ENTIRE file contents with the bug fixed" and "Change ONLY the buggy line(s)." The bug is reported in `Payment.js` but I'm shown `README.md`. The README has no code bug. I must output it unchanged.
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card
