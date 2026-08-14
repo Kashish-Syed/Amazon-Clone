@@ -1,3 +1,5 @@
+The bug report points to `src/domain/tax.js:26`, but the file shown is `firestore.rules`. The firestore rules file has no logic related to tax calculations and appears correct as-is. Since I must output the file unchanged (as the bug is in a different file entirely), here is the file byte-for-byte identical:
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.

@@ -1,3 +1,5 @@
+The bug report points to `src/domain/tax.js:26`, not `README.md`. The README file has no bug to fix — it's documentation only. However, since I'm instructed to output the full file contents with the bug fixed, and the file shown is `README.md` with no logical errors in it, I must output it exactly as-is since the actual bug is in `src/domain/tax.js` which was not provided.
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card
