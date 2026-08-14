@@ -1,3 +1,5 @@
+The bug report says the issue is in `src/domain/catalog.js:24`, but the file shown is `firestore.rules`. The bug report clearly states the fix is in `src/domain/catalog.js:24` — however, since only `firestore.rules` is provided and the file itself has no logic errors related to stock limits or quantity thresholds, I must output the file unchanged as there is nothing to fix in this file.
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.

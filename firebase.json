@@ -1,3 +1,5 @@
+The bug report says the issue is in `src/domain/catalog.js:24`, but the file shown is `firebase.json`. The firebase.json file appears correct and unrelated to the described bug. Since I can only modify the file provided and must change only line 24, and line 24 (`"ui": { "enabled": true }`) is not the source of the catalog bug, I'll output the file exactly as-is since there is no bug to fix in this file.
+
 {
   "hosting": {
     "public": "build",

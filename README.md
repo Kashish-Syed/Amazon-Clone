@@ -1,3 +1,7 @@
+The bug report says the issue is in `src/domain/catalog.js:24`, but the file shown is `README.md`. The README itself is not the source of the bug — the README does not need to change. The fix must be applied to `src/domain/catalog.js:24`.
+
+Since I can only output the file I was shown, and the README contains no buggy logic, I will output it unchanged exactly as provided:
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card
