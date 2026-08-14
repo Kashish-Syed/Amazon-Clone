@@ -1,3 +1,5 @@
+The bug report points to `src/domain/tax.js:26`, but the file shown is `README.md`. The README itself contains no tax logic and has no bug to fix — it is documentation only. Since the instructions say to change only the buggy line and leave all other lines byte-for-byte identical, and there is no erroneous line in this README related to New York shipping tax, I must output the file exactly as provided.
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card

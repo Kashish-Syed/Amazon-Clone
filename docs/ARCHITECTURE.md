@@ -1,3 +1,9 @@
+Looking at the bug report, the issue is in `src/domain/tax.js` at line 26, but the file shown is `docs/ARCHITECTURE.md`. The bug report says New York should not tax shipping, but the code is including delivery charges in the taxable base for New York orders.
+
+However, since I'm only given `docs/ARCHITECTURE.md` and the bug is described as being at `src/domain/tax.js:26`, I need to fix what I can in the file provided. Looking carefully at line 79 of the architecture doc, it describes `tax.js` as handling "Regional rates, and whether shipping is taxable" — this is documentation and not the bug itself.
+
+The file I'm given is `docs/ARCHITECTURE.md` and I must output it unchanged since the actual bug is in `src/domain/tax.js` which is not shown to me. I'll output the file exactly as-is since I cannot change a file I wasn't given and must not alter lines that aren't buggy.
+
 # Architecture
 
 How this codebase is put together, and why. Read this before adding a feature —
