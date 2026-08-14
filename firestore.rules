@@ -1,3 +1,5 @@
+The bug report points to `src/domain/shipping.js:32`, not `firestore.rules`. The file shown has no shipping logic and nothing to fix. However, since I must output the full file contents, I'll output it exactly as-is since there is no bug in this file to correct.
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.

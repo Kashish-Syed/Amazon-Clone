@@ -1,3 +1,5 @@
+The bug report points to `src/domain/shipping.js:32`, but the file shown is `firebase.json` which contains no shipping logic and has no bug to fix. Since I must output the file contents unchanged (as there is nothing to fix in this file), here is the file exactly as provided:
+
 {
   "hosting": {
     "public": "build",

@@ -1,3 +1,9 @@
+The bug report says the fix is in `src/domain/shipping.js:32`, but the file shown is `README.md`. Since I must output the full file contents with only the buggy line fixed, and the README.md has no code related to shipping surcharge calculation, I need to output it unchanged — the README.md itself contains no bug to fix.
+
+However, re-reading the instructions: "Output the ENTIRE file contents with the bug fixed" for the file shown. The README.md is the file shown (200 lines), and the bug is noted as being at `src/domain/shipping.js:32`. The README.md has no shipping logic to fix.
+
+I'll output the README.md exactly as-is, since the bug is in a different file not shown to me:
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card

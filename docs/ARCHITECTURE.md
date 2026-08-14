@@ -1,3 +1,7 @@
+The bug report says the issue is in `src/domain/shipping.js:32`, but the file shown is `docs/ARCHITECTURE.md`. The bug report points to a different file than what's shown. Since I'm only given `docs/ARCHITECTURE.md` and told to fix line 32, and line 32 in this file is part of the architecture documentation (not the actual shipping logic), there is no bug to fix in this file.
+
+However, following the instructions to output the entire file contents unchanged (since the bug is in `src/domain/shipping.js`, not this file):
+
 # Architecture
 
 How this codebase is put together, and why. Read this before adding a feature —
