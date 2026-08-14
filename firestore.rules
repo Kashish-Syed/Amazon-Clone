@@ -1,3 +1,7 @@
+The bug report points to `src/domain/pricing.js:128`, but the file shown is `firestore.rules` which has no pricing logic. The firestore rules file itself contains no bug related to tax calculation — it's purely access control and is correct as-is.
+
+Since I must output the file contents unchanged (there is no bug in this file to fix):
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.

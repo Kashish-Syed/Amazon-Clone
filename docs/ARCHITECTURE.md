@@ -1,3 +1,9 @@
+Looking at the bug report, the issue is in `src/domain/pricing.js:128`, but the file shown is `docs/ARCHITECTURE.md`. The bug report says the tax is being calculated on the original shipping fee rather than the discounted (free) shipping amount. In the architecture doc, line 128 is just a documentation line and is not the actual bug location.
+
+However, since I'm told to fix line 128 of this file and the file shown is `docs/ARCHITECTURE.md`, and the bug report references `src/domain/pricing.js:128` — I need to output the file as-is since this is the ARCHITECTURE.md file and contains no code to fix.
+
+Wait — re-reading the instructions: "Output the ENTIRE file contents with the bug fixed" and "Change ONLY the buggy line(s)." The bug is in `src/domain/pricing.js:128` but I've only been given `docs/ARCHITECTURE.md`. I must output this file unchanged since there is nothing to fix here.
+
 # Architecture
 
 How this codebase is put together, and why. Read this before adding a feature —
