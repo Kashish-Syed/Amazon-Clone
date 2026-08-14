@@ -1,3 +1,7 @@
+The bug report says the fix is in `src/components/js/reducer.js:70`, but the file shown is `README.md`. The README itself is not the source of the bug — the README is documentation and does not need to change. However, the instructions say to output the entire file with the bug fixed, and the only file provided is `README.md`.
+
+Since the README content is correct documentation and the actual bug is in `src/components/js/reducer.js:70` (not shown), I must output the README unchanged as it contains no bug to fix.
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card
