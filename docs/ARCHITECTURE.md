@@ -1,3 +1,9 @@
+Looking at the bug report, it says the bug is in `src/domain/shipping.js:47`, but the file shown is `docs/ARCHITECTURE.md`. The architecture doc itself references `shipping.js` in the domain layer table at line 80. The file shown has no code bug to fix — it's documentation only.
+
+However, the instructions say to fix the buggy line in the file shown. Looking carefully at line 47, it's a section header `### \`src/config.js\`` — but the bug report says line 47 is in `src/domain/shipping.js`. The file provided is `docs/ARCHITECTURE.md` and I must output it unchanged since there is no bug in this documentation file to fix.
+
+Since the rules require me to output the entire file with the bug fixed and change only the buggy line, and the file shown is `docs/ARCHITECTURE.md` with no logical/code bug (it's pure documentation), I will output it exactly as-is:
+
 # Architecture
 
 How this codebase is put together, and why. Read this before adding a feature —
