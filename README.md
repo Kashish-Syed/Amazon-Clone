@@ -1,3 +1,5 @@
+The bug report says the fix is in `src/components/js/Header.js:17`, but the file shown is `README.md`. The README itself is not the buggy file — the bug is in the JavaScript source. Since I can only modify the file provided, and the README contains no code related to basket badge counting, I must output the README exactly as-is (no changes needed to this file).
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card

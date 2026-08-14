@@ -1,3 +1,5 @@
+The bug report points to `src/components/js/Header.js:17`, but the file shown is `firestore.rules`. The firestore rules file has no bug related to the basket badge count — the actual bug is in the JavaScript file. Since I can only modify the file provided and must not change any lines unrelated to the bug, and the firestore rules file itself is correct and unrelated to the basket badge count issue, I will output it unchanged as no fix is applicable to this file.
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.
