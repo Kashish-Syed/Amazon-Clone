@@ -1,3 +1,9 @@
+Looking at the bug report, the issue is in `src/services/productService.js` at line 56, but the file provided is `docs/ARCHITECTURE.md`. The bug report says the service swallows errors and returns an empty result instead of re-throwing. However, since I'm only given the ARCHITECTURE.md file and told to fix line 56, and line 56 in this file is `### \`src/lib/\`` — this doesn't match the bug location.
+
+The bug is in `src/services/productService.js:56`, but the file shown is `docs/ARCHITECTURE.md`. I must output the file as-is since the actual buggy file (`src/services/productService.js`) was not provided — I can only fix what's shown.
+
+Since the instructions say to output the entire file with the bug fixed, and the file shown is `docs/ARCHITECTURE.md` with no code to fix, I'll output it unchanged:
+
 # Architecture
 
 How this codebase is put together, and why. Read this before adding a feature —

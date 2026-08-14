@@ -1,3 +1,7 @@
+The bug report points to `src/services/productService.js:56`, but the file provided is `firebase.json`. Since I can only fix the file shown, and `firebase.json` has no logic errors related to the described bug, I must output it unchanged as instructed to change only the buggy line.
+
+However, re-reading the instructions: I must output the entire file contents. The file shown is `firebase.json` and contains no bug related to the described issue — the actual bug is in `src/services/productService.js:56`. Since I can only work with what's provided, I'll output the file as-is:
+
 {
   "hosting": {
     "public": "build",

@@ -1,3 +1,9 @@
+The bug report points to `src/services/productService.js:56`, but the file shown is `firestore.rules`. The rules file itself looks correct — products are world-readable. The actual bug is in the JavaScript service file at line 56, where a caught error is silently swallowed (returning an empty array instead of re-throwing), causing the silent empty catalogue.
+
+However, since only `firestore.rules` is provided, and the bug report says the fix is in `src/services/productService.js:56`, I can only output the file I was given. The rules file has no bug to fix — it already correctly allows reads.
+
+Since I must output the file as-is (it is correct), here it is unchanged:
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.
