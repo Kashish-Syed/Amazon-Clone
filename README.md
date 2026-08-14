@@ -1,3 +1,7 @@
+The bug report points to `src/components/js/Subtotal.js:18`, but the file shown is `README.md`. Since I must output the full file contents with only the buggy line fixed, and the README.md does not contain the bug (it's in a different file), I need to output the README.md exactly as-is, since no change is needed here.
+
+However, re-reading the instructions: I must fix the bug in the file shown. The file shown IS README.md (200 lines). The bug is in `src/components/js/Subtotal.js:18` — that file is not shown. I can only output the file I was given unchanged.
+
 # Amazon Clone
 
 A React storefront with Firebase Authentication, Cloud Firestore, and Stripe card

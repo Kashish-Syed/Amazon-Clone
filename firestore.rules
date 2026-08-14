@@ -1,3 +1,5 @@
+The bug report points to `src/components/js/Subtotal.js:18`, but the file provided is `firestore.rules`. Since I must output the file shown and change only the buggy line, and the firestore.rules file has no logic related to the described bug, I will output it unchanged as there is nothing to fix in this file.
+
 rules_version = '2';
 
 // Access control for the Amazon Clone.
